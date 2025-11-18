@@ -1,79 +1,67 @@
-import java.util.*;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        QuizManager<Question<String>> quiz = new QuizManager<>();
 
-        IQuiz quiz = new QuizManager();
-
-        // 2️⃣ Soru 1: Multiple choice
-        IQuestion q1 = new Question("Which of these languages run on the JVM?", QuestionType.MULTIPLE_CHOICE);
-        IAnswer a1 = new Answer("Java", true);
-        IAnswer a2 = new Answer("Kotlin", true);
-        IAnswer a3 = new Answer("Python", false);
+        // Soru 1 (Multiple Choice)
+        Question<String> q1 = new Question<>("Which languages run on the JVM?", QuestionType.MULTIPLE_CHOICE);
+        Answer<String> a1 = new Answer<>("Java", true);
+        Answer<String> a2 = new Answer<>("Kotlin", true);
+        Answer<String> a3 = new Answer<>("Python", false);
         q1.addOption(a1);
         q1.addOption(a2);
         q1.addOption(a3);
-        quiz.addQuestion(q1);
 
-        // 3️⃣ Soru 2: Open-ended
-        IQuestion q2 = Question.openEnded("What is the satellite of Earth?", List.of("moon", "Moon", "ay"));
+        // Soru 2 (Open-ended)
+        Question<String> q2 = Question.openEnded("What is the satellite of Earth?", List.of("moon", "ay"));
+
+        quiz.addQuestion(q1);
         quiz.addQuestion(q2);
 
-        System.out.println("Welcome to the Quiz!");
-        System.out.println("--------------------");
-
         int score = 0;
+        System.out.println("---- GENERIC QUIZ ----");
 
-        // 4️⃣ Tüm soruları sırayla kullanıcıya sor
-        for (IQuestion question : quiz.getQuestions()) {
-            System.out.println("\nQuestion: " + question.getText());
+        for (IQuestion<String> question : quiz.getQuestions()) {
+            System.out.println("\n" + question.getText());
 
             if (question.getType() != QuestionType.OPEN_ENDED) {
-                // Şıklarını göster
-                List<IAnswer> options = ((Question) question).getOptions();
+                List<IAnswer<String>> options = ((Question<String>) question).getOptions();
                 for (int i = 0; i < options.size(); i++) {
-                    System.out.println((i + 1) + ". " + options.get(i).getText());
+                    System.out.println((i + 1) + ". " + options.get(i).getValue());
                 }
 
-                System.out.print("Enter your choice (separate multiple answers with comma): ");
+                System.out.print("Your answer(s): ");
                 String input = scanner.nextLine();
                 String[] parts = input.split(",");
-                List<String> chosenIds = new ArrayList<>();
+                List<IAnswer<String>> chosen = new java.util.ArrayList<>();
                 for (String p : parts) {
-                    try {
-                        int index = Integer.parseInt(p.trim()) - 1;
-                        if (index >= 0 && index < options.size()) {
-                            chosenIds.add(options.get(index).getId());
-                        }
-                    } catch (NumberFormatException ignored) { }
+                    int index = Integer.parseInt(p.trim()) - 1;
+                    if (index >= 0 && index < options.size()) {
+                        chosen.add(options.get(index));
+                    }
                 }
 
-                boolean correct = question.checkAnswersById(chosenIds);
-                if (correct) {
+                if (question.checkAnswers(chosen)) {
                     System.out.println("✅ Correct!");
                     score++;
                 } else {
-                    System.out.println("❌ Wrong! Correct answers: " + question.getCorrectAnswerTexts());
+                    System.out.println("❌ Wrong. Correct: " + question.getCorrectAnswers());
                 }
-
             } else {
-                // Açık uçlu soru
                 System.out.print("Your answer: ");
-                String answer = scanner.nextLine();
-
-                boolean correct = question.checkOpenEndedAnswer(answer);
-                if (correct) {
+                String ans = scanner.nextLine();
+                if (question.checkOpenEnded(ans)) {
                     System.out.println("✅ Correct!");
                     score++;
                 } else {
-                    System.out.println("❌ Wrong! Correct answer: " + question.getCorrectAnswerTexts());
+                    System.out.println("❌ Wrong. Correct: " + question.getCorrectAnswers());
                 }
             }
         }
 
-        System.out.println("\n--------------------");
-        System.out.println("Your final score: " + score + " / " + quiz.getTotalQuestions());
-        System.out.println("Thanks for playing!");
+        System.out.println("\nYour score: " + score + " / " + quiz.getQuestions().size());
     }
 }

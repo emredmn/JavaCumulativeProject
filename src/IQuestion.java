@@ -1,13 +1,12 @@
 import java.util.Collection;
 import java.util.List;
 
-public interface IQuestion {
-    String getId();
+public interface IQuestion<T> {
     String getText();
     QuestionType getType();
 
-    void addOption(IAnswer answer);
-    boolean checkAnswersById(Collection<String> chosenIds);
-    boolean checkOpenEndedAnswer(String answer);
-    List<String> getCorrectAnswerTexts();
+    void addOption(IAnswer<T> answer);
+    boolean checkAnswers(Collection<IAnswer<T>> chosen);
+    boolean checkOpenEnded(T answer);
+    List<IAnswer<T>> getCorrectAnswers();
 }

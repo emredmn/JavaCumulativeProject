@@ -1,7 +1,6 @@
 import java.util.List;
 
-public interface IQuiz {
-    void addQuestion(IQuestion question);
-    List<IQuestion> getQuestions();
-    int getTotalQuestions();
+public interface IQuiz<Q extends IQuestion<?>> {
+    void addQuestion(Q question);
+    List<Q> getQuestions();
 }

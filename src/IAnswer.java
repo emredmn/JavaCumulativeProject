@@ -1,6 +1,4 @@
-public interface IAnswer {
-    String getId();
-    String getText();
+public interface IAnswer<T> {
+    T getValue();
     boolean isCorrect();
-
 }

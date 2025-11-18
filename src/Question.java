@@ -1,73 +1,70 @@
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Question implements IQuestion {
-    private final String id;
-    private String text;
+public class Question<T> implements IQuestion<T> {
+    private final String text;
     private final QuestionType type;
-    private final List<IAnswer> options = new ArrayList<>();
-    private final Set<String> acceptedOpenAnswers = new HashSet<>();
+    private final List<IAnswer<T>> options = new ArrayList<>();
+    private final Set<T> acceptedOpenAnswers = new HashSet<>();
 
     public Question(String text, QuestionType type) {
-        this.id = UUID.randomUUID().toString();
         this.text = text;
         this.type = type;
     }
 
-    public static Question openEnded(String text, Collection<String> acceptedAnswers) {
-        Question q = new Question(text, QuestionType.OPEN_ENDED);
-        for (String a : acceptedAnswers) {
-            q.acceptedOpenAnswers.add(a.trim().toLowerCase());
-        }
+    public static Question<String> openEnded(String text, Collection<String> accepted) {
+        Question<String> q = new Question<>(text, QuestionType.OPEN_ENDED);
+        for (String s : accepted)
+            q.acceptedOpenAnswers.add(s.trim().toLowerCase());
         return q;
     }
 
     @Override
-    public void addOption(IAnswer answer) {
-        if (type == QuestionType.OPEN_ENDED)
-            throw new IllegalStateException("Open-ended question can't have options");
+    public void addOption(IAnswer<T> answer) {
         options.add(answer);
     }
 
     @Override
-    public boolean checkAnswersById(Collection<String> chosenIds) {
-        if (type == QuestionType.OPEN_ENDED)
-            throw new IllegalStateException("Use checkOpenEndedAnswer for open-ended question");
+    public boolean checkAnswers(Collection<IAnswer<T>> chosen) {
+        if (type == QuestionType.OPEN_ENDED) throw new IllegalStateException("Use checkOpenEnded for open-ended question");
 
-        Set<String> correctIds = options.stream()
+        Set<T> correct = options.stream()
                 .filter(IAnswer::isCorrect)
-                .map(IAnswer::getId)
+                .map(IAnswer::getValue)
                 .collect(Collectors.toSet());
 
-        return correctIds.equals(new HashSet<>(chosenIds));
+        Set<T> selected = chosen.stream()
+                .map(IAnswer::getValue)
+                .collect(Collectors.toSet());
+
+        return correct.equals(selected);
     }
 
     @Override
-    public boolean checkOpenEndedAnswer(String answer) {
-        return acceptedOpenAnswers.contains(answer.trim().toLowerCase());
+    public boolean checkOpenEnded(T answer) {
+        return acceptedOpenAnswers.contains(
+                answer.toString().trim().toLowerCase()
+        );
     }
 
     @Override
-    public List<String> getCorrectAnswerTexts() {
-        if (type == QuestionType.OPEN_ENDED)
-            return new ArrayList<>(acceptedOpenAnswers);
+    public List<IAnswer<T>> getCorrectAnswers() {
         return options.stream()
                 .filter(IAnswer::isCorrect)
-                .map(IAnswer::getText)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public String getId() { return id; }
-
-    @Override
-    public String getText() { return text; }
-
-    @Override
-    public QuestionType getType() { return type; }
-
-    public List<IAnswer> getOptions() {
-        return Collections.unmodifiableList(options);
+    public String getText() {
+        return text;
     }
 
+    @Override
+    public QuestionType getType() {
+        return type;
+    }
+
+    public List<IAnswer<T>> getOptions() {
+        return Collections.unmodifiableList(options);
+    }
 }

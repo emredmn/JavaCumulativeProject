@@ -2,21 +2,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class QuizManager implements IQuiz {
-    private final List<IQuestion> questions = new ArrayList<>();
+public class QuizManager<Q extends IQuestion<?>> implements IQuiz<Q> {
+    private final List<Q> questions = new ArrayList<>();
 
     @Override
-    public void addQuestion(IQuestion question) {
+    public void addQuestion(Q question) {
         questions.add(question);
     }
 
     @Override
-    public List<IQuestion> getQuestions() {
+    public List<Q> getQuestions() {
         return Collections.unmodifiableList(questions);
-    }
-
-    @Override
-    public int getTotalQuestions() {
-        return questions.size();
     }
 }

@@ -1,28 +1,24 @@
-import java.util.Objects;
-import java.util.UUID;
-
-public class Answer implements IAnswer {
-    private final String id;
-    private final String text;
+public class Answer<T> implements IAnswer<T> {
+    private final T value;
     private final boolean correct;
 
-    public Answer(String text, boolean correct) {
-        this.id = UUID.randomUUID().toString();
-        this.text = Objects.requireNonNull(text).trim();
+    public Answer(T value, boolean correct) {
+        this.value = value;
         this.correct = correct;
     }
 
     @Override
-    public String getId() { return id; }
+    public T getValue() {
+        return value;
+    }
 
     @Override
-    public String getText() { return text; }
-
-    @Override
-    public boolean isCorrect() { return correct; }
+    public boolean isCorrect() {
+        return correct;
+    }
 
     @Override
     public String toString() {
-        return text + (correct ? " (correct)" : "");
+        return value + (correct ? " (correct)" : "");
     }
 }
