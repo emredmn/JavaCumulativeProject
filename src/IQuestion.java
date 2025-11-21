@@ -1,12 +1,8 @@
-import java.util.Collection;
-import java.util.List;
+import java.util.Scanner;
 
-public interface IQuestion<T> {
+public interface IQuestion {
     String getText();
-    QuestionType getType();
 
-    void addOption(IAnswer<T> answer);
-    boolean checkAnswers(Collection<IAnswer<T>> chosen);
-    boolean checkOpenEnded(T answer);
-    List<IAnswer<T>> getCorrectAnswers();
+    // Tüm süreci (yazdırma, cevap alma, kontrol etme) bu metod yönetecek
+    boolean ask(Scanner scanner);
 }

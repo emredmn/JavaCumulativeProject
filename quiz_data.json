@@ -1,0 +1,15 @@
+[
+  {
+    "text": "Which languages run on the JVM?",
+    "options": ["Java", "Kotlin", "Python"],
+    "correct": [0, 1]
+  },
+  {
+    "text": "What is the satellite of Earth?",
+    "answers": ["moon", "ay"]
+  },
+  {
+    "text": "Say my name",
+    "answers": ["emre"]
+  }
+]

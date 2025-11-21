@@ -1,6 +1,8 @@
 import java.util.List;
 
-public interface IQuiz<Q extends IQuestion<?>> {
+// DİKKAT: IQuestion<?> yerine sadece IQuestion yazıyoruz.
+public interface IQuiz<Q extends IQuestion> {
     void addQuestion(Q question);
+
     List<Q> getQuestions();
 }
